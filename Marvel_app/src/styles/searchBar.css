@@ -28,7 +28,7 @@ input:focus {
     outline: none;
 }
 
-#search-icon {
+.search-icon {
     color: #fd0404;
     margin-right: 0.5rem;
 }
