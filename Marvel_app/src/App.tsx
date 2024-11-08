@@ -4,35 +4,39 @@ import SearchBar from "./components/SearchBar"
 import { useCharacterData } from "./hooks/useCharacterData";
 import { useDebounce } from "./hooks/useDebounce";
 import { CharacterCard } from "./components/CharacterCard";
+import { Character } from "./hooks/useCharacterData";
 
 function App() {
-  const { characterData, loading, fetchCharacterData, setOffsetParam, offsetParam } = useCharacterData();
+  const { characterData, loading, fetchCharacterData } = useCharacterData();
   const [characterName, setCharacterName] = useState<string>('');
-  const [savedCharacters, setSavedCharacters] = useState<any[]>([]);
+  const [savedCharacters, setSavedCharacters] = useState<Character[]>([]);
   const debouncedSearch = useDebounce(characterName, 1000)
 
   useEffect(() => {
     // Load saved characters from localStorage on component mount
     const saved = localStorage.getItem('savedCharacters');
     if (saved) {
-      setSavedCharacters(JSON.parse(saved));
+      setSavedCharacters(JSON.parse(saved) as Character[]);
     }
   }, []);
 
   useEffect(() => {
     const loadCharacter = async () => {
-      await fetchCharacterData(characterName)
+      await fetchCharacterData(debouncedSearch)
     }
     loadCharacter()
-  }, [debouncedSearch])
+  }, [debouncedSearch, fetchCharacterData])
 
-  const saveCharacter = (character: any) => {
+  const saveCharacter = (character: Character) => {
+    if (savedCharacters.some((c: Character) => c.id === character.id)) {
+      return;
+    }
     const updatedSavedCharacters = [...savedCharacters, character];
     setSavedCharacters(updatedSavedCharacters);
     localStorage.setItem('savedCharacters', JSON.stringify(updatedSavedCharacters));
   }
 
-  const removeCharacter = (characterId: string) => {
+  const removeCharacter = (characterId: number) => {
     const filteredCharacters = savedCharacters.filter(char => char.id !== characterId);
     setSavedCharacters(filteredCharacters);
     localStorage.setItem('savedCharacters', JSON.stringify(filteredCharacters));
@@ -41,13 +45,14 @@ function App() {
   console.log(characterData)
   return (
     <>
-      {loading ? <div>Loading...</div> :
-        <SearchBar onChange={(name: string) => setCharacterName(name)} />
-      }
-      {!loading && characterData && <CharacterCard data={characterData.results} onSave={(character: object) => saveCharacter(character)} />}
+      {loading && <div>Loading...</div>}
+
+      <SearchBar onChange={(name: string) => setCharacterName(name)} />
+
+      {!loading && characterData && <CharacterCard data={characterData.results} onAction={(character: Character) => {saveCharacter(character)}} />}
       {!loading && !characterData && savedCharacters.length > 0 &&
         <div>
-          <CharacterCard data={savedCharacters} onRemove={(id: number) => removeCharacter(id)} />
+          <CharacterCard data={savedCharacters} onAction={(character) => removeCharacter(character.id)} />
         </div>
       }
     </>

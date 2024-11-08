@@ -1,19 +1,14 @@
 import '../styles/characterCards.scss'
+import { Character } from '../hooks/useCharacterData';
 
-interface Character {
-  id: number;
-  name: string;
-  thumbnail: {
-    path: string;
-    extension: string;
-  };
-}
 
 interface CharacterCardProps {
   data: Character[];
+  onAction: (character: Character) => void;
+  
 }
 
-export const CharacterCard = ({ data, onSave, onRemove }: CharacterCardProps): JSX.Element => {
+export const CharacterCard = ({ data, onAction }: CharacterCardProps): JSX.Element => {
   return (
     <div className="characters">
       {data.map(character =>
@@ -28,13 +23,7 @@ export const CharacterCard = ({ data, onSave, onRemove }: CharacterCardProps): J
             <input className='check-box'
               type="checkbox"
               checked={JSON.parse(localStorage.getItem('savedCharacters') || '[]').some((c: Character) => c.id === character.id)}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                if (e.target.checked) {
-                  onSave(character)
-                } else {
-                  onRemove(character.id)
-                }
-              }}
+              onChange={() => {onAction(character)}}
             />
           </div>
         </div>
