@@ -1,11 +1,13 @@
 
+import { createPortal } from "react-dom"
+import '../styles/loadingLayout.scss'
+import LoadingSpinner from "../components/LoadingSpinner"
 
 export const LoadingLayout = () => {
   return (
-    <div className="loading-layout">
-        <div className="spinnner">
-            <h2>spiner</h2>
-        </div>
-    </div>
+    createPortal(<div className="loading-layout">
+      <LoadingSpinner />
+    </div>, document.body)
+
   )
 }

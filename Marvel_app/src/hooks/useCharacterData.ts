@@ -1,9 +1,5 @@
 import { useState, useCallback } from "react"
-import { generateHash } from "../utils/generateHash"
-import { publicKey } from "../utils/generateHash"
-
-const API_URL = import.meta.env.VITE_API_URL
-const CHARACTERS_PATH = 'v1/public/characters'
+import { getApiUrl } from "../utils/getApiUrl"
 
 export interface Character {
     id: number;
@@ -33,20 +29,9 @@ export const useCharacterData = () => {
     const fetchCharacterData = useCallback(async (characterName: string) => {
 
         setLoading(true)
-
+        
         try {
-            const ts = new Date().getTime()
-            const hash = generateHash(ts)
-            // const url = `${API_URL}${publicKey}&hash=${hash}&ts=${ts}&nameStartsWith=${characterName}&offset=${offsetParam}&limit=20`
-
-            const url = new URL(API_URL)
-            url.pathname = CHARACTERS_PATH
-            url.searchParams.append('apikey', publicKey)
-            url.searchParams.append('nameStartsWith', characterName)
-            url.searchParams.append('hash', hash)
-            url.searchParams.append('ts', ts.toString())
-            url.searchParams.append('offset', offsetParam.toString())
-            url.searchParams.append('limit', '20')
+            const url = getApiUrl({ characterName, offsetParam })
 
             const response = await fetch(url)
             const payload = await response.json()

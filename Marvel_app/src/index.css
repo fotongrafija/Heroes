@@ -4,10 +4,11 @@ body {
   font-family: "Open Sans", sans-serif;
   background: linear-gradient(
         45deg,
-        rgba(0, 110, 193, 0.3),
-        rgba(0, 115, 138, 0.1)
+        rgba(167, 156, 7, 0.3),
+        rgba(63, 212, 241, 0.1)
       )
       no-repeat fixed center,
-    url("./images/xxxx.xxx") no-repeat fixed center;
+    url("./images/marvel-background-3.jpg")  no-repeat fixed center;
   background-size: cover;
+  
 }

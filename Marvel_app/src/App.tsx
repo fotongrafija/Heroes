@@ -5,6 +5,7 @@ import { useCharacterData } from "./hooks/useCharacterData";
 import { useDebounce } from "./hooks/useDebounce";
 import { CharacterCard } from "./components/CharacterCard";
 import { Character } from "./hooks/useCharacterData";
+import { LoadingLayout } from "./layouts/LoadingLayout";
 
 function App() {
   const { characterData, loading, fetchCharacterData } = useCharacterData();
@@ -45,7 +46,7 @@ function App() {
   console.log(characterData)
   return (
     <>
-      {loading && <div>Loading...</div>}
+      {loading && <LoadingLayout />}
 
       <SearchBar onChange={(name: string) => setCharacterName(name)} />
 

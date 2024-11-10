@@ -5,7 +5,7 @@ import { Character } from '../hooks/useCharacterData';
 interface CharacterCardProps {
   data: Character[];
   onAction: (character: Character) => void;
-  
+
 }
 
 export const CharacterCard = ({ data, onAction }: CharacterCardProps): JSX.Element => {
@@ -19,12 +19,16 @@ export const CharacterCard = ({ data, onAction }: CharacterCardProps): JSX.Eleme
           <div className="caption">
             {character.name}
           </div>
-          <div className="bookmark">
-            <input className='check-box'
-              type="checkbox"
-              checked={JSON.parse(localStorage.getItem('savedCharacters') || '[]').some((c: Character) => c.id === character.id)}
-              onChange={() => {onAction(character)}}
-            />
+          <div className="bookmark-wrapper">
+            <label className="bookmark-control">
+              <input
+                className='bookmark-input'
+                name="checkbox"
+                type="checkbox"
+                checked={JSON.parse(localStorage.getItem('savedCharacters') || '[]').some((c: Character) => c.id === character.id)}
+                onChange={() => { onAction(character) }}
+              />
+            </label>
           </div>
         </div>
       )}
