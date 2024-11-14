@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"
 import { getApiUrl } from "../utils/getApiUrl"
 
+
 export interface Character {
     id: number;
     name: string;
@@ -11,8 +12,11 @@ export interface Character {
     };
 }
 
-interface Response {
-    results: Character[]
+export interface Response {
+    results: Character[];
+    total: number;
+    offset: number;
+    limit: number;
 }
 
 interface Error {

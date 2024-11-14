@@ -6,9 +6,12 @@ import { useDebounce } from "./hooks/useDebounce";
 import { CharacterCard } from "./components/CharacterCard";
 import { Character } from "./hooks/useCharacterData";
 import { LoadingLayout } from "./layouts/LoadingLayout";
+import { PaginationComponent } from "./components/PaginationComponent";
+
+
 
 function App() {
-  const { characterData, loading, fetchCharacterData } = useCharacterData();
+  const { characterData, loading, fetchCharacterData, setOffsetParam } = useCharacterData();
   const [characterName, setCharacterName] = useState<string>('');
   const [savedCharacters, setSavedCharacters] = useState<Character[]>([]);
   const debouncedSearch = useDebounce(characterName, 1000)
@@ -43,19 +46,33 @@ function App() {
     localStorage.setItem('savedCharacters', JSON.stringify(filteredCharacters));
   }
 
+  const handlePageChange = (newOffset: number) => {
+
+    setOffsetParam(newOffset)
+  }
+
   console.log(characterData)
+
   return (
     <>
       {loading && <LoadingLayout />}
 
       <SearchBar onChange={(name: string) => setCharacterName(name)} />
 
-      {!loading && characterData && <CharacterCard data={characterData.results} onAction={(character: Character) => {saveCharacter(character)}} />}
-      {!loading && !characterData && savedCharacters.length > 0 &&
+      {characterData && <CharacterCard data={characterData.results} onAction={(character: Character) => { saveCharacter(character) }} />}
+      {!characterData && savedCharacters.length > 0 &&
         <div>
           <CharacterCard data={savedCharacters} onAction={(character) => removeCharacter(character.id)} />
         </div>
       }
+
+      {characterData && characterData.total > 20 &&
+        <PaginationComponent
+          total={characterData.total}
+          offset={characterData.offset}
+          limit={characterData.limit}
+          onChange={handlePageChange} />}
+
     </>
   )
 }

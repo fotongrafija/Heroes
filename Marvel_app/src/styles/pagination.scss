@@ -1,0 +1,58 @@
+
+.pagination {
+    display: flex;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-inline-start: 0;
+    justify-content: center;
+  }
+  .page-item {
+    display: flex;
+    align-items: center;
+  }
+  .page-item:first-child .page-link {
+    // margin-left: 0;
+    // border-bottom-left-radius: 0.25rem;
+    // border-top-left-radius: 0.25rem;
+  }
+  .page-item:last-child .page-link {
+    // border-bottom-right-radius: 0.25rem;
+    // border-top-right-radius: 0.25rem;
+  }
+  .page-item.active .page-link,
+  .page-item.active .page-link:focus,
+  .page-item.active .page-link:hover {
+    z-index: 2;
+    color: #fff;
+    cursor: default;
+    background-color: #ff0000;
+    border-color: #ff0000;
+
+  }
+  .page-item.disabled .page-link,
+  .page-item.disabled .page-link:focus,
+  .page-item.disabled .page-link:hover {
+    color: #ca8989;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: #fff;
+    border-color: #ddd;
+  }
+  .page-link {
+    position: relative;
+    float: left;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    color: #b85c5c;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+  }
+  .page-link:focus,
+  .page-link:hover {
+    color: #8b3d3d;
+    background-color: #efecec;
+    border-color: #ddd;
+  }
+  
