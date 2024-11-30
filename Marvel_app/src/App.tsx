@@ -7,74 +7,83 @@ import { CharacterCard } from "./components/CharacterCard";
 import { Character } from "./hooks/useCharacterData";
 import { LoadingLayout } from "./layouts/LoadingLayout";
 import { PaginationComponent } from "./components/PaginationComponent";
-
+import { useCharacterFilter } from "./hooks/useCharacterFilter";
+import { useBookmark } from "./hooks/useBookmark";
 
 
 function App() {
-  const { characterData, loading, fetchCharacterData, setOffsetParam } = useCharacterData();
-  const [characterName, setCharacterName] = useState<string>('');
-  const [savedCharacters, setSavedCharacters] = useState<Character[]>([]);
-  const debouncedSearch = useDebounce(characterName, 1000)
+	const { characterData, loading, fetchCharacterData, setOffsetParam } = useCharacterData();
 
-  useEffect(() => {
-    // Load saved characters from localStorage on component mount
-    const saved = localStorage.getItem('savedCharacters');
-    if (saved) {
-      setSavedCharacters(JSON.parse(saved) as Character[]);
-    }
-  }, []);
+	const { saveCharacter, removeCharacter, savedCharacters, setSavedCharacters } = useBookmark();
 
-  useEffect(() => {
-    const loadCharacter = async () => {
-      await fetchCharacterData(debouncedSearch)
-    }
-    loadCharacter()
-  }, [debouncedSearch, fetchCharacterData])
+	const { search, setCustomFilter, resetFilters } = useCharacterFilter()
 
-  const saveCharacter = (character: Character) => {
-    if (savedCharacters.some((c: Character) => c.id === character.id)) {
-      return;
-    }
-    const updatedSavedCharacters = [...savedCharacters, character];
-    setSavedCharacters(updatedSavedCharacters);
-    localStorage.setItem('savedCharacters', JSON.stringify(updatedSavedCharacters));
-  }
+	const [characterName, setCharacterName] = useState<string>(search);
+	const debouncedSearch = useDebounce(characterName, 1000)
 
-  const removeCharacter = (characterId: number) => {
-    const filteredCharacters = savedCharacters.filter(char => char.id !== characterId);
-    setSavedCharacters(filteredCharacters);
-    localStorage.setItem('savedCharacters', JSON.stringify(filteredCharacters));
-  }
+	useEffect(() => {
+		// Load saved characters from localStorage on component mount
+		const saved = localStorage.getItem('savedCharacters');
+		if (saved) {
+			setSavedCharacters(JSON.parse(saved) as Character[]);
+		}
+	}, [setSavedCharacters]);
 
-  const handlePageChange = (newOffset: number) => {
+	// Fetchin data
+	useEffect(() => {
 
-    setOffsetParam(newOffset)
-  }
+		fetchCharacterData(debouncedSearch)
 
-  console.log(characterData)
+	}, [debouncedSearch, fetchCharacterData])
 
-  return (
-    <>
-      {loading && <LoadingLayout />}
+	
 
-      <SearchBar onChange={(name: string) => setCharacterName(name)} />
+	const handlePageChange = (newOffset: number) => {
+		setOffsetParam(newOffset)
+	}
 
-      {characterData && <CharacterCard data={characterData.results} onAction={(character: Character) => { saveCharacter(character) }} />}
-      {!characterData && savedCharacters.length > 0 &&
-        <div>
-          <CharacterCard data={savedCharacters} onAction={(character) => removeCharacter(character.id)} />
-        </div>
-      }
 
-      {characterData && characterData.total > 20 &&
-        <PaginationComponent
-          total={characterData.total}
-          offset={characterData.offset}
-          limit={characterData.limit}
-          onChange={handlePageChange} />}
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const searchTerm = e.target.value;
 
-    </>
-  )
+		if (searchTerm === "") {
+			resetFilters(); // Params reset
+		} else {
+			setCustomFilter({
+				search: searchTerm,
+				page: "1",
+			});
+		}
+
+		setCharacterName(searchTerm);
+		setOffsetParam(0);
+	};
+
+	console.log(characterData)
+	console.log(characterName)
+
+	return (
+		<>
+			{loading && <LoadingLayout />}
+
+			<SearchBar onChange={handleSearchChange} value={characterName} />
+
+			{characterData && <CharacterCard data={characterData.results} onAction={(character: Character) => { saveCharacter(character) }} />}
+			{!characterData && savedCharacters.length > 0 &&
+				<div>
+					<CharacterCard data={savedCharacters} onAction={(character) => removeCharacter(character.id)} />
+				</div>
+			}
+
+			{characterData && characterData.offset >= 0 && characterData.total > 20 &&
+				<PaginationComponent
+					total={characterData.total}
+					offset={characterData.offset}
+					limit={characterData.limit}
+					onChange={handlePageChange} />}
+
+		</>
+	)
 }
 
 export default App

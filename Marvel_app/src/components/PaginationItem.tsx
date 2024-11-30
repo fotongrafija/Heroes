@@ -1,23 +1,39 @@
 import classNames from "classnames";
 
 
+
 interface PaginationItemProps {
-    currentPage: number;
-    onPageChange: (page: number) => void;
-    page: number;
-    isDisabled?: boolean;
-  }
+	currentPage: number;
+	onPageChange: (page: number) => void;
+	page: string;
+	isDisabled?: boolean;
+}
 
 
 export const PaginationItem = ({ page, currentPage, onPageChange, isDisabled }: PaginationItemProps): JSX.Element => {
-    const liClasses = classNames({
-      "page-item": true,
-      active: page === currentPage,
-      disabled: isDisabled,
-    });
-    return (
-      <li className={liClasses} onClick={() => onPageChange(page)}>
-        <span className="page-link">{page}</span>
-      </li>
-    );
-  };
+
+	
+
+	
+
+	const parsedPage = parseInt(page)
+
+	const btnClasses = classNames({
+		"page-item": true,
+		active: parsedPage === currentPage,
+		disabled: isDisabled,
+	});
+
+	const pageBtnClasses = classNames({
+		"page-link": true,
+		active: parsedPage === currentPage,
+		disabled: isDisabled,
+	});
+	return (
+		<button disabled={isDisabled} aria-label={`Page button ${page}`} className={btnClasses} onClick={() => onPageChange(parsedPage)}>
+			<span className={pageBtnClasses}>{page}</span>
+		</button>
+	);
+};
+
+

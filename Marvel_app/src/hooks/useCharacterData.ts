@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react"
 import { getApiUrl } from "../utils/getApiUrl"
+import { useCharacterFilter } from "./useCharacterFilter";
 
 
 export interface Character {
@@ -28,8 +29,10 @@ export const useCharacterData = () => {
     const [characterData, setCharacterData] = useState<Response>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<Error>()
-    const [offsetParam, setOffsetParam] = useState(0)
-
+    const { offsetPage } = useCharacterFilter()
+    const [offsetParam, setOffsetParam] = useState(parseInt(offsetPage.toString()))
+   
+    
     const fetchCharacterData = useCallback(async (characterName: string) => {
 
         setLoading(true)
@@ -41,6 +44,7 @@ export const useCharacterData = () => {
             const payload = await response.json()
 
             setCharacterData(payload.data as Response)
+
             setLoading(false)
         }
         catch (event) {

@@ -7,7 +7,7 @@ export const LoadingLayout = () => {
   return (
     createPortal(<div className="loading-layout">
       <LoadingSpinner />
-    </div>, document.body)
+    </div>, document.getElementById('root')!)
 
   )
 }
